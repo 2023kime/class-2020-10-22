@@ -19,7 +19,6 @@ We have now learned two techniques for constructing a posterior probability dist
 
 The parameter $H$ is still the average number of hours of work reported by students per course. 
 
-
 ## Scene 1
 
 **Prompt:** Create an objected called `fit_obj` which uses `stan_glm()` to estimate a model which explains hours for courses. It still has two parameters: $H$ and $\sigma$. $H$ is the average hours for courses in the population. $\sigma$ is the variability (around the average) in reported hours in the population. Print the model out and write some bullet points which explain the meaning of each parameter you have just estimated.
@@ -46,7 +45,6 @@ fit_obj <- stan_glm(hours ~ 1,
 
 ```
 
-
 ## Scene 2
 
 **Prompt:** Create a plot of the posterior probability distribution for $H$. Interpret the plot. 
@@ -71,24 +69,19 @@ fit_obj %>%
 ```
 
 
-
 ## Scene 3
 
 **Prompt:** Use your model to answer the following questions: 
 
 What do the rows and columns mean in the matrix returned by `posterior_predict()` mean?
 
-
 Define D as the number of hours difference between the workload of two randomly selected courses. What is the 90% confidence interval within which the difference should fall?  
-
 
 What is your posterior probability distribution for D? 
 
-
 ```{r}
 
-q3 <- posterior_predict(fit_obj) 
-
+q3 <- posterior_predict(fit_obj)
 course_diff <- tibble(c1 = q3[,1], c2 = q3[,2]) %>%
   mutate(D = c1 - c2)
   quantile(course_diff$D, probs = c(0.05, 0.95))
@@ -104,5 +97,3 @@ labs(title = "Posterior Probability Distribution",
   scale_y_continuous(labels=scales::percent_format()) 
 
 ```
-
-
