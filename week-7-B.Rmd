@@ -26,12 +26,49 @@ The parameter $H$ is still the average number of hours of work reported by stude
 
 Review the Cardinal Virtues which serve as our guide for data science. Under Justice, is this model predictive or causal? What would the Preceptor Table look like? Write down the mathematical model we are using.
 
+```{r}
+
+qscores
+fit_obj <- stan_glm(hours ~ 1, 
+                    family = gaussian, 
+                    data = qscores,
+                    refresh = 0)
+
+# The median value for the average number of hours (H variable) is the intercept
+# at 6.2 hours. 
+# The average standard deviation of hours values from the intercept mu value is 
+# 3.5.
+
+# The model is hard to use as either predictive or causal, since it only uses
+# one variable. It is rather explanatory, because it shows a pattern in the data.
+# The preceptor table looks 
+# The mathematical bayesian model is y1 = mu + sigma
+
+```
 
 
 ## Scene 2
 
 **Prompt:** Create a plot of the posterior probability distribution for $H$. Interpret the plot. 
 
+```{r}
+
+fit_obj %>% 
+  as_tibble() %>% 
+  rename(mu = `(Intercept)`) %>% 
+  ggplot(aes(x = mu)) +
+  geom_histogram(aes(y = after_stat(count/sum(count))), 
+                 binwidth = 0.01, 
+                 color = "white") +
+  labs(title = "Posterior Probability Distribution",
+       subtitle = "Average time spent on class",
+       x = "Time in Hours",
+       y = "Probability") +
+  scale_y_continuous(labels=scales::percent_format())
+
+# The average time spent in hours seems to be grouped around 6.2 hours per class.
+  
+```
 
 
 
@@ -48,5 +85,18 @@ Define D as the number of hours difference between the workload of two randomly 
 What is your posterior probability distribution for D? 
 
 
+```{r}
+
+q3 <- posterior_predict(fit_obj) 
+
+course_diff <- tibble(c1 = q3[,1], c2 = q3[,2]) %>%
+  mutate(D = c1 - c2)
+  quantile(course_diff$D, probs = c(0.05, 0.95))
+  
+ggplot(course_diff, aes(course_diff$D)) +
+  geom_histogram(aes(y = after_stat(count/sum(count))), 
+                 binwidth = 2, 
+                 color = "white")
+```
 
 
