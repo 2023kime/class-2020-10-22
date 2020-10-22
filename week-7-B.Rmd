@@ -92,11 +92,17 @@ q3 <- posterior_predict(fit_obj)
 course_diff <- tibble(c1 = q3[,1], c2 = q3[,2]) %>%
   mutate(D = c1 - c2)
   quantile(course_diff$D, probs = c(0.05, 0.95))
-  
+
 ggplot(course_diff, aes(course_diff$D)) +
   geom_histogram(aes(y = after_stat(count/sum(count))), 
-                 binwidth = 2, 
-                 color = "white")
+                 binwidth = 1,
+                 color = "white") +
+labs(title = "Posterior Probability Distribution",
+       subtitle = "Average difference in time spent on class",
+       x = "Difference in hours",
+       y = "Probability") +
+  scale_y_continuous(labels=scales::percent_format()) 
+
 ```
 
 
